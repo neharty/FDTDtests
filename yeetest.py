@@ -18,7 +18,7 @@ B = gaussian(x)
 B[0] = 0
 B[-1] = 0
 
-T = 10
+T = 5
 dt = dx/2
 
 s = dt/dx
@@ -26,6 +26,7 @@ s = dt/dx
 m = int(round(T/dt))
 
 for j in range(m):
+    #B[1:-1] = B[1:-1] + s*(E[2:] - E[:-2])
     E[1:-1] = E[1:-1] + s*(B[2:] - B[:-2])
     B[1:-1] = B[1:-1] + s*(E[2:] - E[:-2])
     B[0] = B[1]
@@ -41,5 +42,5 @@ for j in range(m):
         plt.plot(x, B)
         plt.ylabel('B')
         
-        plt.tight_layout()
-        plt.show()
+plt.tight_layout()
+plt.show()
