@@ -19,23 +19,22 @@ Hinit[-1] = Hinit[-2]
 
 initial = np.concatenate((Hinit, Einit))
 
-A = np.diag([1 for b in range(len(x)-1)], k=-1) + np.diag([-1 for c in range(len(x)-1)], k=1)
-A = (1/(2*dx))*A
+A = np.diag([1 for b in range(len(x)-1)], k=-1) + np.diag([-1 for c in range(len(x))])
+A = (1/(dx))*A
 
 Hm = np.copy(A)
 
-Hm[0,1] = 0
-Hm[1,1] = -10
-Hm[1,2] = 0
-Hm[-2,-2] = -10
-Hm[-2, -1] = 0
-Hm[-1,-2] = 0
-Hm[-1,-1] = 0
+Hm[0,:] = 0
+Hm[1,:] = 0
+#Hm[-2,-2] = -10
+#Hm[-2, -1] = 0
+#Hm[-2,:] = 0
+Hm[-1,:] = 0
 
 
 Em = np.copy(A)
-Em[0,1] = 0
-Em[-1,-2] = 0
+Em[0,:] = 0
+Em[-1,:] = 0
 
 print(Hm)
 print(Em)
@@ -47,11 +46,11 @@ coeffs = np.block([
 def odesys(t, y):
     y = np.transpose(y)
     dydt = np.dot(coeffs, y)
-    print(dydt[len(x)-2])
+    #print(dydt[len(x)-2])
     dydt[-1] = dydt[-2]
     return dydt
 
-T=5
+T=7
 sol = solve_ivp(odesys, [0, T], initial, max_step=0.1, dense_output=True, method='LSODA')
 #print(np.shape(sol.y))
 #print(len(x))

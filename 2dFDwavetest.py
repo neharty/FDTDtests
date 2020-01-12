@@ -57,9 +57,9 @@ for j in range(0, m):
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_zlabel('u')
-
+        plt.title('t=' + str(t))
         plt.tight_layout(pad=2.8)
-        plt.show()
+        #plt.show()
+        plt.savefig('testplots/2dwave' + str(int(t)) + '.pdf')
         plt.clf()
-
 print('process took ' + str(time.time() - start) + ' seconds')

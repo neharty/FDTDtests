@@ -5,7 +5,7 @@ def gaussian(x, mu, sig):
     return np.exp(-((x - mu)/sig)**2 /2)
 
 c1 = 1
-c2 = 4
+c2 = 0.5
 dx = 0.01
 L = 10
 x = np.linspace(0, L, num = (L/dx) + 1)
@@ -58,6 +58,7 @@ for j in range(m):
         #plt.autoscale(enable=False)
         plt.ylim([-1, 1])
         plt.xlim([0, 20])
-        plt.show()
+        #plt.show()
+        plt.savefig('testplots/two2masses' + str(int(t)) + '.pdf')
         plt.clf()
-                       
+        #plt.show()              
