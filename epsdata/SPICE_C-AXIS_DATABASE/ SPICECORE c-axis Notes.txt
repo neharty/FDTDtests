@@ -1,0 +1,11 @@
+C-axis Database Notes for SPC14, SPICECORE;
+Version; 17 September, 2017
+
+For each nominal depth there is a folder with;1) A text file, * SPICE.txt, with the grain number (starting with grain 0), theta, phi and R2 value for each grain. Analysis was performed on vertically oriented thin sections. The raw data are therefore also in a vertical orientation (with the "Y axis" corresponding to the vertical axis of the ice core). Therefore, for a vertical data set Y is vertical, X is in the plane of section horizontal, and Z is out of the plane of section horizontal.
+
+The C-axis data are given as theta and phi. Theta is the angle measured from the positive Z axis (the Optic Axis) with positive values measured towards the positive X axis and negative values towards the negative X axis. Phi is the azimuthal angle measured from the X axis with positive values being measured counter clockwise.
+
+In some files, grains for which the program was unable to calculate a c-axis are labeled as "grain not analyzable". The R2 value is a value for the quality of the measurement of a particular grain. A grain with low R2 has lower uncertainty with values below 0.05 being acceptable. Values greater than 0.05 are valid but have a greater uncertainty.
+2) A Schmidt Plot of both the vertical data and the horizontally rotated data (*_VSP.jpeg, *_HSP.jpeg and *_HSP R.jpeg). To view the Schmidt Plot in a horizontal orientation the vertical data has been rotated around the X axis. 
+
+For continuity, the data are also rotated around the core’s vertical axis so the major axis of the data set is parallel to X. The value for rotation is listed on the *HSP R.jpeg as “azimuth”. This rotation is based on the understanding that c axes rotate towards the plane perpendicular to ice flow. Because of difficulties in the field the physical properties samples were not oriented relative to a consistent compass direction. This rotation allows the horizontal Schmidt Plots to be viewed all with a common orientation.Data Type(s):  (terms from the GCMD Keyword list)4) An image of the thin section; either a JPEG or BMP.Top Depth, Bottom Depth and Eigen values for each depth’s sample are presented in the PDF, "Database of SPICE Sections”. 
