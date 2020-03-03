@@ -3,7 +3,7 @@ import numpy as np
 #from scipy.integrate import solve_ivp
 
 def gaussian(x):
-    return np.exp(-(x - 5)**2 / 2)/np.sqrt(2*np.pi)
+    return np.exp(-(x - 5)**2 / 2)
 
 dx = 0.05
 L = 10
@@ -32,24 +32,26 @@ for j in range(m):
     
     E[1:-1] = E[1:-1] + s*(B[2:] - B[:-2])
     
-    t = j*dt
+    t = (j+1)*dt
     
-    #if(t==int(t)):
-    plt.subplot(1,2,1)
-    plt.plot(x, E)
-    plt.ylabel('E')
+    if(t==int(t)):
+        plt.subplot(1,2,1)
+        plt.plot(x, E)
+        plt.ylabel('E')
                 
-    plt.subplot(1,2,2)
-    plt.plot(x, B)
-    plt.ylabel('B')
+        plt.subplot(1,2,2)
+        plt.plot(x, B)
+        plt.ylabel('B')
         
     plt.tight_layout()
-    plt.savefig('___t{0:03d}.png'.format(j))
-    plt.clf()
+    #plt.savefig('___t{0:03d}.png'.format(j))
+    #plt.clf()
 
+'''
 import commands
 print commands.getoutput('convert -quality 100 ___t*.png giftest/yeetest.gif')
 print commands.getoutput('rm ___t*.png') #remove temp files        
-#plt.tight_layout()
+'''
+plt.tight_layout()
 #plt.savefig('testplots/yeetest.pdf')
-#plt.show()
+plt.show()
