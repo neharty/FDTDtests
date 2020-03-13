@@ -1,3 +1,4 @@
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
@@ -15,8 +16,11 @@ times = np.zeros(qnum)
 #for q in range(qnum):
 t0 = time.time()
 L = 10
-dx = 0.01
-xx = np.linspace(0, L, num = (L/dx) + 1)
+numints =500
+dx = float(L)/numints
+#dx = 0.1
+print(int(L/dx))
+xx = np.linspace(0, L, num = numints+1)
 N = len(xx)
 
 Einit = h.initial(xx)
@@ -24,13 +28,14 @@ Einit[0] = 0
 Einit[-1] = 0
 
 Hinit = h.initial(xx)
+#Hinit = np.zeros(N)
 Hinit[0] = 0
 Hinit[-1] = 0
 
 H00 = h.D0(xx, L)
 
-a1 = np.array([0.0 for n in range(N-1)])
-a2 = np.array([0.0 for n in range(N-2)])
+a1 = np.zeros(N-1)
+a2 = np.zeros(N-2)
 
 initial = np.concatenate((Hinit, Einit))
 #A = np.zeros((N,N))
@@ -68,7 +73,9 @@ Hm[-3,-2] = 38.0/75
 Hm[-3,-3] = 3.0/25
 Hm[-3,-4] = -18.0/25
 Hm[-3,-5] = 7.0/75
-
+#print(Hm)
+vals, vects = np.linalg.eig(Hm)
+print(vals[np.abs(np.real(vals)) > 1])
 Hm = 1/(dx)*Hm
 
 Em = np.copy(A)
@@ -98,15 +105,10 @@ Em[-1,-5] = 1.0/4
 
 Em[2,0] = 0.0
 Em[-3,-1] = 0.0
-
+#print(Em)
+vals, vects = np.linalg.eig(Em)
+print(vals[np.abs(np.real(vals)) > 1])
 Em = 1/(dx)*Em
-
-print(Em)
-print(Hm)
-
-#coeffs = np.block([
-#    [np.zeros((N, N)), Em],
-#    [Hm, np.zeros((N, N))]])
 
 def odesys(t, y):
     dydt = np.zeros(2*N)
@@ -116,22 +118,80 @@ def odesys(t, y):
     dydt[N:] = np.dot(Hm, y[:N])
     return dydt
 
-T = 100
+T = 20
 
-sol = solve_ivp(odesys, [0, T], initial, max_step=dx, method='RK45')
+sol = solve_ivp(odesys, [0, T], initial, max_step=dx,rtol=1e-5,atol=1e-8, method='RK45')
 
-Herr = np.zeros(len(sol.t))
+Herr=np.zeros(len(sol.t))
 Eerr=np.zeros(len(sol.t))
+Herrmin=np.zeros(len(sol.t))
+Eerrmin=np.zeros(len(sol.t))
+
 H = H00 + np.array([0.0 for i in range(N)])
 E = np.array([0.0 for i in range(N)])
 t = sol.t
 XX, TT = np.meshgrid(xx, t)
-for k in range(1,100):
+for k in range(1,151):
     H = H + h.Hn(XX, TT, k, L)
     E = E + h.En(XX, TT, k, L)
-axes = tuple(i for i in range(N))
 Herr = np.amax(np.abs(sol.y[:N] - np.transpose(H)), axis=0)
 Eerr = np.amax(np.abs(sol.y[N:] - np.transpose(E)), axis=0)   
+#Herrmin = np.amin(np.abs(sol.y[:N] - np.transpose(H)), axis=0)
+#Eerrmin = np.amin(np.abs(sol.y[N:] - np.transpose(E)), axis=0)
+
+'''
+Herr2=np.zeros(len(sol.t))
+Eerr2=np.zeros(len(sol.t))
+for j in range(len(sol.t)):
+    H = H00 + np.array([0.0 for i in range(N)])
+    E = np.array([0.0 for i in range(N)])
+    for k in range(1,101):
+        H = H + h.Hn(xx, sol.t[j], k, L)
+        E = E + h.En(xx, sol.t[j], k, L)
+    Herr2[j] = np.max(np.abs(sol.y[:N,j] - H))
+    Eerr2[j] = np.max(np.abs(sol.y[N:,j] - E)) 
+'''
+'''
+fig = plt.figure(figsize=[16,9])
+ax = fig.add_subplot(221)
+ax.matshow(H,extent=(0,10,0,T))
+ax.set_xlabel('x')
+ax.set_ylabel('t')
+#ax.set_zlabel('H')
+
+ax = fig.add_subplot(222)
+ax.matshow(E,extent=(0,10,0,T))
+ax.set_xlabel('x')
+ax.set_ylabel('t')
+#ax.set_zlabel('E')
+'''
+'''
+fig = plt.figure(figsize=[16,9])
+
+Hsol = np.transpose(sol.y[:N,:])
+ax = fig.add_subplot(121)
+mt = ax.matshow(Hsol, extent=(0,10,0,T))
+ax.set_xlabel('x')
+ax.set_ylabel('t')
+ax.set_title('H')
+cbar = fig.colorbar(mt, ax=ax)
+#ax.set_zlabel('H')
+
+Esol = np.transpose(sol.y[N:, :])
+ax = fig.add_subplot(122)
+mt = ax.matshow(Esol, extent=(0,10,0,T))
+ax.set_xlabel('x')
+ax.set_ylabel('t')
+ax.set_title('E')
+cbar = fig.colorbar(mt, ax=ax)
+#ax.set_zlabel('E')
+
+plt.tight_layout()
+plt.savefig('testresults/moltest/plots/rk45/HzeroEgaussian.pdf')
+#plt.show()
+#plt.clf()
+'''
+
 #print(q)
 #Herrmax[q] = np.max(Herr)
 #Eerrmax[q] = np.max(Eerr)
@@ -152,7 +212,7 @@ for i in range(T+1):
     H = H00 + np.array([0.0 for i in range(N)])
     E = np.array([0.0 for i in range(N)])
     t = sol.t[index]
-    for k in range(1,100):
+    for k in range(1,500):
         H = H + h.Hn(xx, t, k, L)
         E = E + h.En(xx, t, k, L)
     #print(np.max(np.abs(sol.y[:N, index] - H)))
@@ -160,10 +220,26 @@ for i in range(T+1):
     #plt.show()
 plt.show()
 '''
-plt.semilogy(sol.t, Herr, '.', label='H error')
-plt.semilogy(sol.t, Eerr, '.', label='E error')
+plt.clf()
+plt.semilogy(sol.t, Herr, '.', label='max H error')
+plt.semilogy(sol.t, Eerr, '.', label='max E error')
+#plt.semilogy(sol.t, Eerrmin, '.', label='min E error')
+#plt.semilogy(sol.t, Herrmin, '.', label='min H error')
+plt.grid()
+plt.xlabel('t')
+plt.ylabel('error')
+plt.title('dx=' + str(dx))
+#plt.loglog(qs, qs**2, '--')
+plt.legend()
+plt.tight_layout()
+plt.show()
+#plt.savefig('testresults/moltest/plots/MOL4errorvstime300.pdf')
+'''
+plt.clf()
+plt.semilogy(sol.t, Herr2, '.', label='H error')
+plt.semilogy(sol.t, Eerr2, '.', label='E error')
 plt.grid()
 #plt.loglog(qs, qs**2, '--')
 plt.legend()
 plt.show()
-
+'''
