@@ -1,53 +1,45 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def gaussian(x, mu, sig):
-    return np.exp(-((x - mu)/sig)**2 /2)
+def initial(x, mu):
+    return np.exp(-((x - mu))**2) - np.exp(-(mu)**2)
 
-c = 1
-dx = 0.01
-L = 100
-x = np.linspace(0, L, num = (L/dx) + 1)
+def c(z):
+    return 1/(1+z/L)
+
+L = 50
+numints = 5000
+dx = L/numints
+x = np.linspace(0, L, num = numints + 1)
 N = len(x)
 
-dt = dx/(2*c)
-s = (c*dt/dx)**2
+cmax = max(c(x))
+dt = dx/(2*cmax)
+s = (c(x[1:-1])*dt/dx)**2
 
-u = gaussian(x, L/2, 1)
-#u=np.sin(5*np.pi*x/L)
-
-#u[0] = 0
-#u[-1] = u[-2]
-#u[-1] = 0
+u = initial(x, L/2)
 
 deriv = np.zeros(len(x))
-#deriv[len(x)/2 - 500 : len(x)/2 + 500] = 1
+
 u1 = np.zeros(len(x))
-#u1[1:-1] = np.copy((s/2)*(u[2:]+u[:-2])+(1-s)*u[1:-1]+dt*deriv[1:-1])
 u1[1:-1] = u[1:-1] + dt*deriv[1:-1]
-u1[-1]=u1[-2]
-T = 40
+T = 1500
 m = int(round(T/dt))
-diffmatrix = np.zeros((len(x), m))
 for j in range(m):
     tmp = np.copy(u1)
     u1[1:-1] = s*(u1[2:] + u1[:-2]) + 2*(1-s)*u1[1:-1] - u[1:-1]
-    #u1[-1] = u1[-2]
     u = np.copy(tmp)
     
-    #diffmatrix[:,j] = np.abs(u1 -0.5*(gaussian(x,x - t,1) + gaussian(x, x+t, 1)))
-
     t = (j+2)*dt
-    #print(np.max(u1 -0.5*(gaussian(x,L/2 - t,1) + gaussian(x, L/2+t, 1))))
-    diffmatrix[:,j] = np.abs(u1 -0.5*(gaussian(x,L/2-t,1) + gaussian(x, L/2+t, 1)))
-
-    if(t == int(t)):
-        plt.plot(x, u1, label='t='+str(t))
-        plt.plot(x, 0.5*(gaussian(x,L/2 - t,1) + gaussian(x, L/2+t, 1)))
-        plt.ylabel('u')
+    
+    if(t%(3*L)==0):
+        print(np.max(np.abs(u1-initial(x,L/2))))
+        plt.plot(x, u1)
+        #plt.plot(x, 0.5*(gaussian(x,L/2 - t,1) + gaussian(x, L/2+t, 1)))
+        plt.ylabel('E')
         plt.xlabel('x')
-        plt.legend()
-        plt.tight_layout()
-        #plt.show()
-#plt.savefig('testplots/gaussianpulsering.pdf')
-print(np.max(np.max(diffmatrix)))
+        plt.title('t=' +str(t) + ', dx='+str(dx))
+        
+plt.tight_layout()   
+#plt.show()
+plt.savefig('./testresults/epsgaussian_waveqn.pdf')

@@ -1,3 +1,4 @@
+#actually 4th order accurate
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,13 +6,6 @@ from scipy.integrate import solve_ivp
 from scipy.integrate import quad
 import helper as h
 import time
-import sys
-
-qs = np.logspace(-2, -1, 5)
-qnum = len(qs)
-Herrmax = np.zeros(qnum)
-Eerrmax = np.zeros(qnum)
-times = np.zeros(qnum)
 
 #for q in range(qnum):
 t0 = time.time()
@@ -38,12 +32,9 @@ a1 = np.zeros(N-1)
 a2 = np.zeros(N-2)
 
 initial = np.concatenate((Hinit, Einit))
-#A = np.zeros((N,N))
-#print(type(A[0,0]))
 A = np.diag(a1+(2.0/3), k=1) + np.diag(a1-(2.0/3), k=-1) + np.diag(a2+(1.0/12), k=-2) + np.diag(a2-(1.0/12), k=2)
 
 np.set_printoptions(precision=3,threshold=10)
-#print(A)
 Hm = np.copy(A)
 
 Hm[0,:] = 0.0
@@ -73,7 +64,7 @@ Hm[-3,-2] = 38.0/75
 Hm[-3,-3] = 3.0/25
 Hm[-3,-4] = -18.0/25
 Hm[-3,-5] = 7.0/75
-#print(Hm)
+
 vals, vects = np.linalg.eig(Hm)
 print(vals[np.abs(np.real(vals)) > 1])
 Hm = 1/(dx)*Hm
@@ -105,7 +96,7 @@ Em[-1,-5] = 1.0/4
 
 Em[2,0] = 0.0
 Em[-3,-1] = 0.0
-#print(Em)
+
 vals, vects = np.linalg.eig(Em)
 print(vals[np.abs(np.real(vals)) > 1])
 Em = 1/(dx)*Em
@@ -118,7 +109,7 @@ def odesys(t, y):
     dydt[N:] = np.dot(Hm, y[:N])
     return dydt
 
-T = 20
+T = 500
 
 sol = solve_ivp(odesys, [0, T], initial, max_step=dx,rtol=1e-5,atol=1e-8, method='RK45')
 

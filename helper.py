@@ -3,8 +3,8 @@ from scipy.integrate import quad
 from scipy.special import erf
 #TODO: check and generalize formulas
 
-def initial(x):
-    return np.exp(-(x-5)**2) - np.exp(-25)
+def initial(x,l):
+    return np.exp(-(x-l/2)**2) - np.exp(-(l/2)**2)
     #return np.cos(np.pi/10 *(x-5))
 
 def a(n, l):
