@@ -3,34 +3,36 @@ from scipy.integrate import quad
 from scipy.special import erf
 #TODO: check and generalize formulas
 
+A = 1
+alph = 400
+
+def erfs(l,alpha,n):
+    c1 = np.sqrt(alpha)*l/2 
+    c2 = n*np.pi/(2*l*np.sqrt(alpha))
+    erfs=erf(c1+1j*c2)+erf(c1-1j*c2)-2*erf(1j*c2)
+    return A*(np.sqrt(np.pi/alpha)/l)*np.exp(-(c2**2))*erfs
+
 def initial(x,l):
-    return np.exp(-(x-l/2)**2) - np.exp(-(l/2)**2)
-    #return np.cos(np.pi/10 *(x-5))
+    return A*np.exp(-alph*(x-l/2)**2)
 
 def a(n, l):
-    #f = lambda y: np.sin((n*np.pi/l)*y)*initial(y)
-    #sol, err = quad(f, 0, l, epsabs=1e-16, epsrel=1e-16, limit=1000)
-    #return 2*sol/l
-    sol = 2*((-1)**n - 1)/(n*np.exp(25)*np.pi) - 1/20.0*1j*np.exp(-(n*np.pi*(200*1j+np.pi*n))/400)*(-1+np.exp(n*np.pi*1j))*np.sqrt(np.pi)*(erf(5-(n*np.pi*1j/20))+erf(5+(n*np.pi*1j/20)))
+    sol = -np.cos(n*np.pi/2)*erfs(l,alph,n)
     return np.real(sol)
 
 def b(n, l):
-    #g = lambda x: np.cos((n*np.pi/l)*x)*initial(x)
-    #sol, err = quad(g, 0, l, epsabs=1e-16, epsrel=1e-16, limit=1000)
-    #return 2*sol/l
-    sol =  1/20.0*np.exp(-(n*np.pi*(200*1j+np.pi*n))/400)*(1+np.exp(n*np.pi*1j))*np.sqrt(np.pi)*(erf(5-(n*np.pi*1j/20))+erf(5+(n*np.pi*1j/20)))
+    sol=np.sin(n*np.pi/2)*erfs(l,alph,n)
     return np.real(sol)
 
 def En(x,t,n,l):
     w = n*np.pi/l
-    return np.sin(w*x)*(-b(n, l)*np.sin(w*t) + a(n, l)*np.cos(w*t))
+    return np.sin(w*x)*(a(n, l)*np.sin(w*t) + b(n, l)*np.cos(w*t))
 
 def Hn(x,t,n,l):
     w = n*np.pi/l
-    return np.cos(w*x)*(a(n, l)*np.sin(w*t) + b(n, l)*np.cos(w*t))
+    return np.cos(w*x)*(b(n, l)*np.sin(w*t) - a(n, l)*np.cos(w*t))
 
 def D0(x,l):
-    sol = -10/np.exp(25)+np.sqrt(np.pi)*erf(5)
+    sol = A*np.sqrt(np.pi/alph)*erf(np.sqrt(alph)*l/2)
     return sol/l
 '''
 def initial(x):

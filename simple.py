@@ -1,18 +1,61 @@
 import numpy as np
-from scipy.integrate import solve_ivp
+#from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
+import helper as h
+import helperints as hi
 
-def ode(t,y):
-    return [y[1], -y[0]]
+L=1
+x = np.linspace(0,1, 1001)
 
-sol = solve_ivp(ode, [0,int(2e4)], [0, 1], method='RK45')
+T = np.linspace(0,2, 16)
 
-err = np.array(np.abs(sol.y[0] - np.sin(sol.t)))
+fig, (ax1, ax2) = plt.subplots(1,2, figsize=(16,9))
 
-#plt.plot(sol.t, sol.y[0])
-#plt.show()
-#plt.clf()
-plt.grid()
-plt.semilogy(sol.t, err, '.')
+Herr = np.zeros(len(T))
+Eerr = np.zeros(len(T))
+
+for i in T:
+    H = np.zeros(len(x))
+    E = np.zeros(len(x))
+
+    H = H+h.D0(x,L)
+
+    #Hi = np.zeros(len(x))
+    #Ei = np.zeros(len(x))
+
+    #Hi = H+hi.D0(10)
+
+    for j in range(1, 170):
+        E=E+h.En(x,i,j,L)
+        H=H+h.Hn(x,i,j,L)
+
+        #Ei=E+hi.En(x,i,j,10)
+        #Hi=H+hi.Hn(x,i,j,10)
+    
+    #Herr[i] = np.max(np.abs(H-Hi))
+    #Eerr[i] = np.max(np.abs(E-Ei))
+
+    ax1.plot(x, E, label='t='+str(i))
+    ax2.plot(x, H, label='t='+str(i))
+    
+
+ax1.set_xlabel('$x$')
+ax2.set_xlabel('$x$')
+
+ax1.set_ylabel('$E_z$')
+ax2.set_ylabel('$H_y$')
+
+plt.legend()
+plt.tight_layout()
+#plt.savefig('analyticEH.pdf')
 plt.show()
+'''
+plt.clf()
 
+plt.semilogy(T, Eerr, '.', label='E error')
+plt.semilogy(T, Herr, '.', label='H error')
+plt.xlabel('t')
+plt.ylabel('max abs error')
+plt.legend()
+plt.show()
+'''
