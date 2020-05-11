@@ -7,7 +7,7 @@ import helperints as hi
 L=1
 x = np.linspace(0,1, 1001)
 
-T = np.linspace(0,2, 16)
+T = np.linspace(0,1.5,7)
 
 fig, (ax1, ax2) = plt.subplots(1,2, figsize=(16,9))
 
@@ -25,7 +25,7 @@ for i in T:
 
     #Hi = H+hi.D0(10)
 
-    for j in range(1, 170):
+    for j in range(1, 150):
         E=E+h.En(x,i,j,L)
         H=H+h.Hn(x,i,j,L)
 

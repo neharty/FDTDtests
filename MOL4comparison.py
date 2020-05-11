@@ -4,16 +4,19 @@ from scipy.integrate import solve_ivp
 from scipy.integrate import quad
 import helper as h
 
-qs= np.linspace(0.01, 0.1, num=21)
+qs= np.logspace(2, 3, num=21)
+qs = np.floor(qs)
 qnum = len(qs)
+hs = np.zeros(qnum)
 Herrmax = np.zeros(qnum)
 Eerrmax = np.zeros(qnum)
 
 for q in range(qnum):
 
-	L = 10
-	dx = qs[q]
-	xx = np.linspace(0, L, num = (L/dx) + 1)
+	L = 10.0
+	dx = L/qs[q]
+	hs[q] = dx
+	xx = np.linspace(0, L, num = qs[q] + 1)
 	N = len(xx)
 
 	Einit = h.initial(xx)
@@ -106,12 +109,12 @@ for q in range(qnum):
 		dydt[N:] = np.dot(Hm, y[:N])
 		return dydt
 
-	T = 10
+	T = 50
 
-	sol = solve_ivp(odesys, [0, T], initial, max_step = 0.1, method='RK45')
+	sol = solve_ivp(odesys, [0, T], initial, max_step = dx, method='RK45')
 
 	Herr = np.zeros(len(sol.t))
-        Eerr=np.zeros(len(sol.t))
+	Eerr=np.zeros(len(sol.t))
 	ctr = 0
 	Herr = np.zeros(len(sol.t))
 	Eerr=np.zeros(len(sol.t))
@@ -129,5 +132,5 @@ for q in range(qnum):
 	Herrmax[q] = np.max(Herr)
 	Eerrmax[q] = np.max(Eerr)
 
-np.savetxt('testresults/mol4compar.out', (qs,Herrmax,Eerrmax,qs**4))
+np.savetxt('txtfiles/mol4compar.out', (hs,Herrmax,Eerrmax,hs**4))
 

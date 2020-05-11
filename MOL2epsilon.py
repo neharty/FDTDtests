@@ -25,21 +25,6 @@ a1=0.5*np.ones(N-1)
 Dx = np.diag(a1, k=1) + np.diag(-a1, k=-1)
 np.set_printoptions(precision=3,threshold=10)
 
-'''
-Hm = np.copy(A)
-
-Hm[-1, :] = 0
-Hm[0, :] = 0
-print(Hm)
-Hm = 1/(dx)*Hm
-Em = np.copy(A)
-
-Em[-1, :] = 0
-Em[0, :] = 0
-print(Em)
-Em = 1/(dx)*Em
-'''
-
 Dx[0,0] = -3/2
 Dx[0,1] = 2
 Dx[0,2] = -1/2
