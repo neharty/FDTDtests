@@ -21,7 +21,7 @@ for q in range(qnum):
     H00 = h.D0(xx, L)
     
     dt = dx/2
-    s = dt/(2*dx)
+    s = dt/dx
     
     T=2
     m = int(round(T/dt))
@@ -35,11 +35,11 @@ for q in range(qnum):
     Ea[-1,0]=0
 
     for j in range(1,m+1):
-        Ha[1:-1,j] = Ha[1:-1,j-1] + s*(Ea[2:,j-1] - Ea[:-2,j-1])
+        Ha[1:-1,j] = Ha[1:-1,j-1] + s*(Ea[2:,j-1] - Ea[1:-1,j-1])
         Ha[0,j] = (4./3)*Ha[1,j] - (1./3)*Ha[2,j]
         Ha[-1,j] = (4./3)*Ha[-2,j] - (1./3)*Ha[-3,j]
 
-        Ea[1:-1,j] = Ea[1:-1,j-1] + s*(Ha[2:,j] - Ha[:-2,j])
+        Ea[1:-1,j] = Ea[1:-1,j-1] + s*(Ha[1:-1,j] - Ha[:-2,j])
         Ea[0,j] = 0
         Ea[-1,j] = 0
         

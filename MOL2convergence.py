@@ -80,9 +80,9 @@ for q in range(qnum):
 
 plt.loglog(hs, Herrmax,'.-', label='H error')
 plt.loglog(hs, Eerrmax,'.-',label='E error')
-plt.loglog(hs, 1e4*hs**2, '--', label=r'$(\Delta x)^2$')
+plt.loglog(hs, 1e4*hs**2, '--')
 plt.legend()
 plt.xlabel(r'$\Delta x$')
 plt.title('MOL convergence')
-#plt.savefig('./testresults/moltest/MOL2/MOL2convergence.pdf')
-plt.show()
+plt.savefig('./testresults/moltest/MOL2/MOL2convergence.pdf')
+#plt.show()

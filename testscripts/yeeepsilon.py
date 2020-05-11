@@ -3,8 +3,8 @@ import numpy as np
 import helper as h
 #from scipy.integrate import solve_ivp
 
-numints = 5000
-L = 50.
+numints = 1000
+L = 1.
 dx = L/numints
 x = np.linspace(0, L, num = numints + 1)
 N = len(x)
@@ -28,13 +28,13 @@ Ha = h.initial(x, L)
 Ha[0] = (18./11)*Ha[1] - (9./11)*Ha[2] + (2./11)*Ha[3]
 Ha[-1] = (18./11)*Ha[-2] - (9./11)*Ha[-3] + (2./11)*Ha[-4]
 
-T = 750
+T = 10
 
 epsmax = max(n(x)**2)
 cmax=max(1/n(x))
 #dt = (epsmax*dx)**2
-dt = dx/cmax
-s = dt/(dx)
+dt = dx
+s = dt/dx
 
 m = int(round(T/dt))
 
@@ -46,7 +46,7 @@ fig, (ax11,ax12) = plt.subplots(nrows = 1, ncols=2,figsize=(16,9))
 Htmp = np.zeros(len(Ha))
 for j in range(m+1):
     Htmp[:] = Ha[:]
-    Ha[1:-1] = Ha[1:-1] + s*(Ea[2:] - Ea[1:-1])
+    Ha[1:-1] = Ha[1:-1] + s*(Ea[2:] - Ea[:-2])
     #Ha[-1] = Ha[-2]
     #Ha[0] = Ha[1]
     
@@ -60,7 +60,7 @@ for j in range(m+1):
     Ha[0] = (18./11)*Ha[1] - (9./11)*Ha[2] +(2./11)*Ha[3]
     Ha[-1] = (18./11)*Ha[-2] - (9./11)*Ha[-3] + (2./11)*Ha[-4]
 
-    Ea[1:-1] = Ea[1:-1] + s*(Ha[1:-1] - Ha[:-2])/(n(x[1:-1]))**2
+    Ea[1:-1] = Ea[1:-1] + s*(Ha[2:] - Ha[:-2])
     #Ea[-1] = Ea[-2]
     #Ea[0] = Ea[1]
     
@@ -73,9 +73,9 @@ for j in range(m+1):
 
     t = (j+1)*dt
     
-    if(t%(3*L)==0):
-    #if(t==int(t)):
-        print(str(np.max(np.abs(Ea-h.initial(x,L)))) + '\t'+str(np.max(np.abs(Ha-h.initial(x,L)))))
+    #if(t%(3*L)==0):
+    if(t==int(t)):
+        #print(str(np.max(np.abs(Ea-h.initial(x,L)))) + '\t'+str(np.max(np.abs(Ha-h.initial(x,L)))))
         ax11.plot(x, Ea)
         ax11.set_ylabel('E')
         #ax11.set_ylim([-1,1])

@@ -33,4 +33,4 @@ ax12.plot(x, np.sin(2*x),'--')
 ax21.plot(x, np.sin(3*x),'--')
 ax22.plot(x, np.sin(4*x),'--')
 
-plt.show()
+plt.savefig('sltest.pdf')
